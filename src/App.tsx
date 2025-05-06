@@ -1,55 +1,26 @@
-import { useEffect, useState } from "react";
-import type { Schema } from "../amplify/data/resource";
-import { generateClient } from "aws-amplify/data";
-import { useAuthenticator } from "@aws-amplify/ui-react";
+import type { Schema } from "../amplify/data/resource"; // Import the Schema type
+import { generateClient } from "aws-amplify/data"; // Import the function to generate a client
+import { useAuthenticator } from "@aws-amplify/ui-react"; // Import the Authenticator hook
 
+// Generate the client using the Schema type
 const client = generateClient<Schema>();
 
 function App() {
+  // Destructure user and signOut from the useAuthenticator hook
   const { user, signOut } = useAuthenticator();
-  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
 
-  useEffect(() => {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
-    });
-  }, []);
+  // Extract the username from the user's loginId or default to "User"
+  const displayedUsername = user?.signInDetails?.loginId?.split('@')[0] || "User";
 
-  function createTodo() {
-    client.models.Todo.create({ content: window.prompt("Todo content") });
-  }
-
-  function deleteTodo(id: string) {
-    client.models.Todo.delete({ id });
-  }
-
-
-             // "jane.doe"
-             const username = user?.signInDetails?.loginId?.split('@')[0] || "User";
   return (
     <main>
-      
-      <h1>Thank you {username} for signing in.</h1>
-      <button onClick={createTodo}>+ new</button>
+      {/* Display a welcome message with the username */}
+      <h1>Thank you {displayedUsername} for signing in.</h1>
 
-      <ul>
-        {todos.map((todo) => (
-          <li onClick={() => deleteTodo(todo.id)} key={todo.id}>
-            {todo.content}
-          </li>
-        ))}
-      </ul>
-
-      <div>
-        🥳 App successfully hosted. Try creating a new todo.
-        <br />
-        <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
-          Review next step of this tutorial.
-        </a>
-      </div>
+      {/* Button to sign out */}
       <button onClick={signOut}>Sign out</button>
     </main>
   );
 }
 
-export default App;
+export default App; // Export the App component
