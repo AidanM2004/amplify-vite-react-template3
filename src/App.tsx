@@ -23,9 +23,13 @@ function App() {
     client.models.Todo.delete({ id });
   }
 
+
+             // "jane.doe"
+             const username = user?.signInDetails?.loginId?.split('@')[0] || "User";
   return (
     <main>
-            <h1>{user?.signInDetails?.loginId}'s todos</h1>
+      
+      <h1>Thank you {username} for signing in.</h1>
       <button onClick={createTodo}>+ new</button>
 
       <ul>
